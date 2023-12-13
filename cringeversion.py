@@ -4,35 +4,6 @@ import sympy as sp
 import pygame_gui
 
 
-'''
-## тут какой-то лютый кринж, хз зачем он, но с ним раболтает все заебись, но заебеннее, поэтому чекнуть, что тут происходит
-# Уравнение сохранения импульса
-momentum_eq = sp.Eq(
-    m1 * v1i + m2 * v2i,
-    m1 * v1f + m2 * v2f
-)
-# Уравнение сохранения кинетической энергии
-energy_eq = sp.Eq(
-    half * m1 * v1i ** 2 + half * m2 * v2i ** 2,
-    half * m1 * v1f ** 2 + half * m2 * v2f ** 2
-)
-# Решение системы уравнений относительно v1f и v2f
-solutions = sp.solve([momentum_eq, energy_eq], [v1f, v2f])
-
-# Отбор решений, которые соответствуют физическим условиям (скорости должны измениться после столкновения)
-solutions = [s for s in solutions if s != (v1i, v2i)][0]
-v1f_solved, v2f_solved = [sp.simplify(s) for s in solutions]
-
-
-# Лямбда-функции для вычисления скоростей после столкновения на основе полученных решений
-##v1f_f = sp.lambdify([m1, m2, v1i, v2i], v1f_solved)
-##v2f_f = sp.lambdify([m1, m2, v1i, v2i], v2f_solved)
-
-# Инициализация pygame
-
-'''
-
-
 # settings for screen
 WIDTH, HEIGHT = 800, 400
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -72,8 +43,8 @@ class Block:
 
     def collide_with_wall(self):
         if self.rect.x <= 0:
-            self.rect.x = 0  # Коррекция положения, чтобы блок не уходил за пределы экрана
-            self.velocity = -self.velocity  # Изменение направления движения
+            self.rect.x = 0  # to not exit the screen
+            self.velocity = -self.velocity
             return True
         return False
 
@@ -120,7 +91,7 @@ def main(mass1, mass2, speed2):
             block1.velocity = v1_final
             block2.velocity = v2_final
 
-            # Минимальное смещение, чтобы избежать зацикливания столкновений
+            # to not to loop
             while block1.rect.colliderect(block2.rect):
                 block1.rect.x += block1.velocity
                 block2.rect.x += block2.velocity
@@ -134,7 +105,7 @@ def main(mass1, mass2, speed2):
         block1.draw()
         block2.draw()
 
-        # Отображаем количество столкновений
+        # print count of collisions
         font = pygame.font.SysFont(None, 35)
         collision_text = font.render(f"Collisions: {collision_count}", True, BLACK)
         screen.blit(collision_text, (WIDTH // 2 - collision_text.get_width() // 2, 10))
