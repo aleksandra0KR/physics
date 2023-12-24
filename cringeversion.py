@@ -59,19 +59,19 @@ class Block:
 
 # counting speed after collision with object_2 for self element
 def get_speed_after_collision(self, object_2):
-    return ((self.mass - object_2.mass) / (self.mass + object_2.mass)) * self.velocity + \
-        ((2 * object_2.mass) / (self.mass + object_2.mass)) * object_2.velocity
+    return (((self.mass - object_2.mass) / (self.mass + object_2.mass)) * self.velocity +
+        ((2 * object_2.mass) / (self.mass + object_2.mass)) * object_2.velocity)
 
 # shit
-def calculate_collision_velocity(b1, b2):
-    return get_speed_after_collision(b1, b2), get_speed_after_collision(b2, b1)
+def calculate_collision_velocity(b1, b2, friction):
+    return get_speed_after_collision(b1, b2) * (1 - friction) , get_speed_after_collision(b2, b1) * (1 - friction)
 
 
-def main(mass1, mass2, speed2):
+def main(mass1, mass2, speed2, friction):
 
     # creating blocks
     block1 = Block(200, HEIGHT, mass1, 0, (192, 185, 221))
-    block2 = Block(500, HEIGHT, mass2, speed2, (117, 201, 200))
+    block2 = Block(500, HEIGHT, mass2, speed2 * (1 - friction), (117, 201, 200))
 
     collision_count = 0
 
@@ -89,7 +89,7 @@ def main(mass1, mass2, speed2):
         block2.move()
 
         if block1.rect.colliderect(block2.rect):
-            v1_final, v2_final = calculate_collision_velocity(block1, block2)
+            v1_final, v2_final = calculate_collision_velocity(block1, block2, friction)
             block1.velocity = v1_final
             block2.velocity = v2_final
 
@@ -180,4 +180,4 @@ def get_data():
 
 
 pygame.display.update()
-main(10000,10000000,-20)
+main(1,100,-2, 0.3)
