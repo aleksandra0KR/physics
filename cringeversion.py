@@ -9,9 +9,9 @@ WIDTH, HEIGHT = 800, 400
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Absolutely elastic interaction")
 pygame.init()
-manager = pygame_gui.UIManager((pygame.FULLSCREEN, pygame.FULLSCREEN))
+manager = pygame_gui.UIManager((900,900))
 
-text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((400 - 100, 50, 200, 50)), manager=manager,
+text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((440, 450, 860, 50)), manager=manager,
                                                  object_id='#main_text_entry')
 
 m1, m2, v1i, v2i, v1f, v2f = sp.symbols('m_1, m_2, v_1i, v_2i, v_1f, v_2f')
@@ -131,36 +131,8 @@ def get_data():
                 sys.exit()
             if (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and
                     event.ui_object_id == '#main_text_entry'):
-                mass1, mass2, speed2 = [int(x) for x in text_input.get_text().split()]
-                main(mass1, mass2, -speed2)
-            manager.process_events(event)
-        manager.update(10)
-
-        screen.fill("white")
-        font = pygame.font.SysFont(None, 24)
-        text_surface = font.render("Enter masses of body 1 and body 2 and speed of 2 body separated by a space:", False,
-                                   "black")
-        text_rect = text_surface.get_rect()
-        text_rect.centerx = screen.get_width() / 2
-        text_rect.centery = screen.get_height() / 2 - 50
-        screen.blit(text_surface, text_rect)
-
-        manager.draw_ui(screen)
-
-        pygame.display.update()
-
-def get_data():
-    while True:
-
-        for event in pygame.event.get():
-
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and
-                    event.ui_object_id == '#main_text_entry'):
-                mass1, mass2, speed2 = [int(x) for x in text_input.get_text().split()]
-                main(mass1, mass2, -speed2)
+                mass1, mass2, speed2, friction = [int(x) for x in text_input.get_text().split()]
+                main(mass1, mass2, -speed2, friction)
             manager.process_events(event)
         manager.update(10)
 
@@ -180,4 +152,4 @@ def get_data():
 
 
 pygame.display.update()
-main(1,100,-2, 0.3)
+get_data()
