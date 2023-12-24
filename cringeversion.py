@@ -2,16 +2,16 @@ import sys
 import pygame
 import sympy as sp
 import pygame_gui
-
+import time
 
 # settings for screen
 WIDTH, HEIGHT = 800, 400
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Absolutely elastic interaction")
 pygame.init()
-manager = pygame_gui.UIManager((800, 400))
+manager = pygame_gui.UIManager((pygame.FULLSCREEN, pygame.FULLSCREEN))
 
-text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((230, 200), (400, 50)), manager=manager,
+text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((400 - 100, 50, 200, 50)), manager=manager,
                                                  object_id='#main_text_entry')
 
 m1, m2, v1i, v2i, v1f, v2f = sp.symbols('m_1, m_2, v_1i, v_2i, v_1f, v_2f')
@@ -38,6 +38,7 @@ class Block:
     def move(self):
         self.rect.x += self.velocity
         if self.rect.x > 800:
+            time.sleep(10000)
             pygame.quit()
             sys.exit()
 
@@ -81,6 +82,7 @@ def main(mass1, mass2, speed2):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                time.sleep(100000)
                 running = False
 
         block1.move()
@@ -113,7 +115,9 @@ def main(mass1, mass2, speed2):
         pygame.display.flip()
         pygame.time.Clock().tick(60)
 
+    time.sleep(10000)
     pygame.quit()
+    time.sleep(100000)
     sys.exit()
 
 
@@ -176,4 +180,4 @@ def get_data():
 
 
 pygame.display.update()
-get_data()
+main(10000,10000000,-20)
