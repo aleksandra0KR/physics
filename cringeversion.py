@@ -9,8 +9,9 @@ WIDTH, HEIGHT = 800, 400
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Absolutely elastic interaction")
 pygame.init()
-manager = pygame_gui.UIManager((900,900))
 
+# settings for input
+manager = pygame_gui.UIManager((900,900))
 text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((440, 450, 860, 50)), manager=manager,
                                                  object_id='#main_text_entry')
 
@@ -18,15 +19,14 @@ m1, m2, v1i, v2i, v1f, v2f = sp.symbols('m_1, m_2, v_1i, v_2i, v_1f, v_2f')
 global mass1, mass2, speed2
 half = sp.numer(1) / 2
 
-
-# colors to use // now we don't fully use them
+# colors
 YELLOW = (255, 255, 0)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 
-# entety for block
+# model for block
 class Block:
     def __init__(self, x, y, mass, velocity, color):
         self.mass = mass
@@ -62,22 +62,21 @@ def get_speed_after_collision(self, object_2):
     return (((self.mass - object_2.mass) / (self.mass + object_2.mass)) * self.velocity +
         ((2 * object_2.mass) / (self.mass + object_2.mass)) * object_2.velocity)
 
-# shit
-def calculate_collision_velocity(b1, b2, friction):
+# counting speed after collision with object_2 for self element with friction
+def calculate_collision_velocity_with_friction(b1, b2, friction):
     return get_speed_after_collision(b1, b2) * (1 - friction) , get_speed_after_collision(b2, b1) * (1 - friction)
 
 
 def main(mass1, mass2, speed2, friction):
 
-    # creating blocks
+
     block1 = Block(200, HEIGHT, mass1, 0, (192, 185, 221))
     block2 = Block(500, HEIGHT, mass2, speed2 * (1 - friction), (117, 201, 200))
-
     collision_count = 0
 
-    # main loop
     running = True
     while running:
+
         screen.fill("white")
 
         for event in pygame.event.get():
@@ -88,18 +87,20 @@ def main(mass1, mass2, speed2, friction):
         block1.move()
         block2.move()
 
+        # checking for collision with each other
         if block1.rect.colliderect(block2.rect):
-            v1_final, v2_final = calculate_collision_velocity(block1, block2, friction)
+            v1_final, v2_final = calculate_collision_velocity_with_friction(block1, block2, friction)
             block1.velocity = v1_final
             block2.velocity = v2_final
 
-            # to not to loop
+            # to not loop
             while block1.rect.colliderect(block2.rect):
                 block1.rect.x += block1.velocity
                 block2.rect.x += block2.velocity
 
             collision_count += 1
 
+        # checking for collision with wall
         if block1.collide_with_wall():
             block1.velocity = abs(block1.velocity)
             collision_count += 1
@@ -115,12 +116,14 @@ def main(mass1, mass2, speed2, friction):
         pygame.display.flip()
         pygame.time.Clock().tick(60)
 
+    # sleep to see results
     time.sleep(10000)
     pygame.quit()
     time.sleep(100000)
     sys.exit()
 
 
+# get input from user
 def get_data():
     while True:
 
@@ -129,16 +132,19 @@ def get_data():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
             if (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and
                     event.ui_object_id == '#main_text_entry'):
                 mass1, mass2, speed2, friction = [int(x) for x in text_input.get_text().split()]
                 main(mass1, mass2, -speed2, friction)
+
             manager.process_events(event)
+
         manager.update(10)
 
         screen.fill("white")
         font = pygame.font.SysFont(None, 24)
-        text_surface = font.render("Enter masses of body 1 and body 2 and speed of 2 body separated by a space:", False,
+        text_surface = font.render("Enter masses of body 1 and body 2 and speed of 2 body and friction separated by a space:", False,
                                    "black")
         text_rect = text_surface.get_rect()
         text_rect.centerx = screen.get_width() / 2
@@ -148,8 +154,6 @@ def get_data():
         manager.draw_ui(screen)
 
         pygame.display.update()
-
-
 
 pygame.display.update()
 get_data()
