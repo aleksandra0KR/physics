@@ -1,0 +1,128 @@
+from math import log
+import matplotlib.pyplot as pt
+
+class Electron:
+    def __init__(self):
+        self.x = 0
+        self.r1 = 1.5
+        self.r2 = 4
+        self.y = (self.r2 - self.r1) / 2 + self.r1
+        self.vx = 8500000
+        self.vy = 0
+        self.q = -1.6 * 10 ** -19
+        self.m = 9.1 * 10 ** -31
+        self.l_ = 12
+        self.t = 0
+
+    def acceleration(self, U):
+        return (self.q * U) / (self.y * self.m * log(self.r2 / self.r1))
+
+    def the_motion_of_an_electron_in_an_electric_field(self, U):
+        dt = 1 / 1000000000000
+        while self.x < self.l_ and self.y > self.r1:
+            dvy = self.acceleration(U)
+            self.vy += dvy * dt
+            self.y += self.vy * dt
+            self.x += self.vx * dt
+            self.t += dt
+
+    def graphic(self, U):
+        dt = 1 / 1000000000000
+        yx = []
+        vy = []
+        ay = []
+        yt = []
+        while self.x < self.l_ or self.y > self.r1:
+            yx.append((self.x, self.y))
+            vy.append((self.t, self.vy))
+            dvy = self.acceleration(U)
+            ay.append((self.t, dvy))
+            yt.append((self.t, self.y))
+            self.vy += dvy * dt
+            self.y += self.vy * dt
+            self.x += self.vx * dt
+            self.t += dt
+        return [yx, vy, ay, yt]
+      
+    def print_graphicVx(self, yx):
+
+      pt.title('The dependence of height on distance y(x)')
+      pt.xlabel('x, meter')
+      pt.ylabel('y, meter')
+
+      pt.plot([i[0] for i in yx], [i[1] for i in yx])
+      pt.grid()
+      pt.savefig('y(x)', )
+
+      pt.show()
+      print()
+
+    def print_graphicVt(self, vy):
+
+      pt.title('The dependence of velocity on time V(t)')
+      pt.xlabel('Time, second')
+      pt.ylabel('Speed, meter/second')
+
+      pt.grid()
+      pt.plot([i[0] for i in vy], [i[1] for i in vy])
+      pt.savefig('Vy(t)', )
+
+      pt.show()
+      print()
+    
+    def print_graphicat(self, ay):
+
+      pt.title('The dependence of acceleration on time a(t)')
+      pt.xlabel('Time, second')
+      pt.ylabel('Acceleration, meter/second^2')
+
+      pt.grid()
+      pt.plot([i[0] for i in ay], [i[1] for i in ay])
+      pt.savefig('ay(t)', )
+
+      pt.show()
+      print()
+
+
+    def print_graphicYt(self, yt):
+
+      pt.title('The dependence of height on time Y(t)')
+      pt.xlabel('Time, second')
+      pt.ylabel('Height, meter')
+
+      pt.grid()
+      pt.plot([i[0] for i in yt], [i[1] for i in yt])
+      pt.savefig('y(t)', )
+
+      pt.show()
+
+def main():
+  Umax = 1000
+  Umin = 0
+  while Umax - Umin > 0.0000001:
+      Electron_ = Electron()
+      U = (Umax + Umin) / 2
+      Electron_.the_motion_of_an_electron_in_an_electric_field(U)
+      if Electron_.x >= Electron_.l_:
+          Umin = U
+      else:
+          Umax = U
+
+  Electron_ = Electron()
+  yx, vy, ay, yt = Electron_.graphic(U)
+
+  print("Minimum voltage U =", U, 'Volts\n')
+
+  print("Flight time t =", Electron_.t, 'second\n')
+
+  print("The final velocity of the electron is V =", (Electron_.vy ** 2 + Electron_.vx ** 2) ** 0.5,  'meter/second\n')
+
+  Electron_.print_graphicVx(yx)
+
+  Electron_.print_graphicVt(vy)
+
+  Electron_.print_graphicat(ay)
+
+  Electron_.print_graphicYt(yt)
+
+main()
