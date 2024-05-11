@@ -35,7 +35,7 @@ func maxFromSlice(array []float64) float64 {
 	return res
 }
 
-func calculation(inputValues InputValues) (t, phi1_t, phi2_t, v1_t, v2_t []float64) {
+func calculation(inputValues InputValues) (t, phi1T, phi2T, v1T, v2T []float64) {
 	const g = 9.82
 
 	omega1 := math.Sqrt(g / inputValues.L)
@@ -47,10 +47,10 @@ func calculation(inputValues InputValues) (t, phi1_t, phi2_t, v1_t, v2_t []float
 	dt := 0.001
 
 	t = make([]float64, 0, int(inputValues.T/dt)+1)
-	phi1_t = make([]float64, 0, int(inputValues.T/dt)+1)
-	phi2_t = make([]float64, 0, int(inputValues.T/dt)+1)
-	v1_t = make([]float64, 0, int(inputValues.T/dt)+1)
-	v2_t = make([]float64, 0, int(inputValues.T/dt)+1)
+	phi1T = make([]float64, 0, int(inputValues.T/dt)+1)
+	phi2T = make([]float64, 0, int(inputValues.T/dt)+1)
+	v1T = make([]float64, 0, int(inputValues.T/dt)+1)
+	v2T = make([]float64, 0, int(inputValues.T/dt)+1)
 
 	for i := 0.0; i <= inputValues.T/dt; i++ {
 		time := i * dt
@@ -61,35 +61,35 @@ func calculation(inputValues InputValues) (t, phi1_t, phi2_t, v1_t, v2_t []float
 		v2 := (𝜉1*omega1*(-math.Sin(omega1*time)) - 𝜉2*omega2*(-math.Sin(omega2*time))) * math.Exp((-inputValues.beta)*time)
 
 		t = append(t, time)
-		phi1_t = append(phi1_t, phi12)
-		phi2_t = append(phi2_t, phi22)
-		v1_t = append(v1_t, v1)
-		v2_t = append(v2_t, v2)
+		phi1T = append(phi1T, phi12)
+		phi2T = append(phi2T, phi22)
+		v1T = append(v1T, v1)
+		v2T = append(v2T, v2)
 	}
 
 	fmt.Printf("Нормальная частота omega1: %0.6f Герц\n", omega1)
 	fmt.Printf("Нормальная частота omega2: %0.6f Герц\n", omega2)
 
-	return t, phi1_t, phi2_t, v1_t, v2_t
+	return t, phi1T, phi2T, v1T, v2T
 }
 
-func VFromTPlot2(t, v1_t, v2_t []float64) {
-	plot := plot.New()
+func VFromTPlot2(t, v1T, v2T []float64) {
+	p := plot.New()
 
-	plot.Title.Text = "Зависимость скорости от времени для каждого маятника V(t)"
-	plot.X.Label.Text = "Время (сек)"
-	plot.Y.Label.Text = "Скорость (рад/сек)"
+	p.Title.Text = "Зависимость скорости от времени для каждого маятника V(t)"
+	p.X.Label.Text = "Время (сек)"
+	p.Y.Label.Text = "Скорость (рад/сек)"
 	width := vg.Points(0.5)
 
 	first := make(plotter.XYs, len(t))
 	second := make(plotter.XYs, len(t))
 
-	for i, _ := range t {
+	for i := range t {
 		first[i].X = t[i]
-		first[i].Y = v1_t[i]
+		first[i].Y = v1T[i]
 
 		second[i].X = t[i]
-		second[i].Y = v2_t[i]
+		second[i].Y = v2T[i]
 	}
 
 	firstLine, err := plotter.NewLine(first)
@@ -106,40 +106,40 @@ func VFromTPlot2(t, v1_t, v2_t []float64) {
 	secondLine.Width = width
 	secondLine.Color = color.RGBA{R: 0, G: 255, B: 255, A: 255}
 
-	plot.Add(firstLine, secondLine)
+	p.Add(firstLine, secondLine)
 
-	plot.Legend.Add("Первый", firstLine)
-	plot.Legend.Add("Второй", secondLine)
+	p.Legend.Add("Первый", firstLine)
+	p.Legend.Add("Второй", secondLine)
 
-	plot.X.Min = minFromSlice(t)
-	plot.X.Max = maxFromSlice(t)
-	plot.Y.Min = min(minFromSlice(v1_t), minFromSlice(v2_t))
-	plot.Y.Max = max(maxFromSlice(v1_t), maxFromSlice(v2_t))
+	p.X.Min = minFromSlice(t)
+	p.X.Max = maxFromSlice(t)
+	p.Y.Min = min(minFromSlice(v1T), minFromSlice(v2T))
+	p.Y.Max = max(maxFromSlice(v1T), maxFromSlice(v2T))
 
 	filename := "v(t).png"
 
-	if err := plot.Save(5*vg.Inch, 3*vg.Inch, filename); err != nil {
-		log.Fatal("failed to save plot", "err", err)
+	if err := p.Save(5*vg.Inch, 3*vg.Inch, filename); err != nil {
+		log.Fatal("failed to save p", "err", err)
 	}
 }
 
-func PhiFromTPlot2(t, phi1_t, phi2_t []float64) {
-	plot := plot.New()
+func PhiFromTPlot2(t, phi1T, phi2T []float64) {
+	p := plot.New()
 
-	plot.Title.Text = "Зависимость угла от времени для каждого маятника phi(t)"
-	plot.X.Label.Text = "Время (сек)"
-	plot.Y.Label.Text = "Угол (рад)"
+	p.Title.Text = "Зависимость угла от времени для каждого маятника phi(t)"
+	p.X.Label.Text = "Время (сек)"
+	p.Y.Label.Text = "Угол (рад)"
 	width := vg.Points(0.5)
 
 	first := make(plotter.XYs, len(t))
 	second := make(plotter.XYs, len(t))
 
-	for i, _ := range t {
+	for i := range t {
 		first[i].X = t[i]
-		first[i].Y = phi1_t[i]
+		first[i].Y = phi1T[i]
 
 		second[i].X = t[i]
-		second[i].Y = phi2_t[i]
+		second[i].Y = phi2T[i]
 
 	}
 
@@ -157,20 +157,20 @@ func PhiFromTPlot2(t, phi1_t, phi2_t []float64) {
 	secondLine.Width = width
 	secondLine.Color = color.RGBA{R: 0, G: 255, B: 255, A: 255}
 
-	plot.Add(firstLine, secondLine)
+	p.Add(firstLine, secondLine)
 
-	plot.Legend.Add("Первый", firstLine)
-	plot.Legend.Add("Второй", secondLine)
+	p.Legend.Add("Первый", firstLine)
+	p.Legend.Add("Второй", secondLine)
 
-	plot.X.Min = minFromSlice(t)
-	plot.X.Max = maxFromSlice(t)
-	plot.Y.Min = min(minFromSlice(phi1_t), minFromSlice(phi2_t))
-	plot.Y.Max = max(maxFromSlice(phi1_t), maxFromSlice(phi2_t))
+	p.X.Min = minFromSlice(t)
+	p.X.Max = maxFromSlice(t)
+	p.Y.Min = min(minFromSlice(phi1T), minFromSlice(phi2T))
+	p.Y.Max = max(maxFromSlice(phi1T), maxFromSlice(phi2T))
 
 	filename := "phi(t).png"
 
-	if err := plot.Save(5*vg.Inch, 3*vg.Inch, filename); err != nil {
-		log.Fatal("failed to save plot", "err", err)
+	if err := p.Save(5*vg.Inch, 3*vg.Inch, filename); err != nil {
+		log.Fatal("failed to save p", "err", err)
 	}
 }
 
@@ -187,19 +187,88 @@ func main() {
 	}
 
 	var phi1, phi2 float64
-	fmt.Scan(&inputValues.L)
-	fmt.Scan(&inputValues.L1)
-	fmt.Scan(&inputValues.m)
-	fmt.Scan(&inputValues.k)
-	fmt.Scan(&inputValues.beta)
-	fmt.Scan(&phi1)
+	_, err := fmt.Scan(&inputValues.L)
+	if err != nil {
+		return
+	}
+	if inputValues.L < 0 {
+		fmt.Println("L can't be negative, try again")
+		return
+	}
+	_, err = fmt.Scan(&inputValues.L1)
+	if err != nil {
+		return
+	}
+	if inputValues.L1 < 0 {
+		fmt.Println("L can't be negative, try again")
+		return
+	}
+	_, err = fmt.Scan(&inputValues.m)
+	if err != nil {
+		return
+	}
+	if inputValues.m < 0 {
+		fmt.Println("m can't be negative, try again")
+		return
+	}
+	_, err = fmt.Scan(&inputValues.k)
+	if err != nil {
+		return
+	}
+	if inputValues.k < 0 {
+		fmt.Println("k can't be negative, try again")
+		return
+	}
+	_, err = fmt.Scan(&inputValues.beta)
+	if err != nil {
+		return
+	}
+	if inputValues.beta < 0 {
+		fmt.Println("beta can't be negative, try again")
+		return
+	}
+	_, err = fmt.Scan(&phi1)
+	if err != nil {
+		return
+	}
+	if phi1 < 0 {
+		fmt.Println("phi1 can't be negative, try again")
+		return
+	}
 	inputValues.phi1 = math.Pi / 180 * phi1
-	fmt.Scan(&phi2)
+	_, err = fmt.Scan(&phi2)
+	if err != nil {
+		return
+	}
+	if phi1 < 0 {
+		fmt.Println("phi2 can't be negative, try again")
+		return
+	}
 	inputValues.phi2 = math.Pi / 180 * phi2
-	fmt.Scan(&inputValues.T)
-
-	t, phi1_t, phi2_t, v1_t, v2_t := calculation(inputValues)
-	PhiFromTPlot2(t, phi1_t, phi2_t)
-	VFromTPlot2(t, v1_t, v2_t)
+	_, err = fmt.Scan(&inputValues.T)
+	if err != nil {
+		return
+	}
+	if inputValues.T < 0 {
+		fmt.Println("T can't be negative, try again")
+		return
+	}
+	t, phi1T, phi2T, v1T, v2T := calculation(inputValues)
+	PhiFromTPlot2(t, phi1T, phi2T)
+	VFromTPlot2(t, v1T, v2T)
 
 }
+
+/*
+
+example input
+1.0
+1.0
+1.0
+0.1
+0.01
+10
+20
+100
+
+*/
