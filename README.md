@@ -14,4 +14,7 @@
 линии. Вывод цветного спектра и графика зависимости интенсивности от угловой
 координаты (угла дифракции)
 
-- пример для period - 1.0  total number of strokes - 1000.0 distance - 3.0 
+пример для period - 1.0  total number of strokes - 1000.0 distance - 3.0
+  ![](https://github.com/aleksandra0KR/physics/blob/master/pictures/1.png?raw=true)
+  ![](https://github.com/aleksandra0KR/physics/blob/master/pictures/2.png?raw=true)
+
