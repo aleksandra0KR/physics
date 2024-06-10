@@ -11,12 +11,6 @@ import (
 	"sync"
 )
 
-type InputValues struct {
-	T float64 // период решетки
-	N float64 // общее число штрихов
-	d float64 // расстояние (м)
-}
-
 func check(input float64) {
 	if input < float64(0) {
 		fmt.Errorf("input is negative, should be positive")
