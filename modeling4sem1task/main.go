@@ -11,10 +11,12 @@ import (
 	"gonum.org/v1/plot"
 )
 
+// вводимые данные
 type InputValues struct {
 	L, L1, m, k, beta, phi1, phi2, T float64
 }
 
+// вспомагательная функция для графиков
 func minFromSlice(array []float64) float64 {
 	res := array[0]
 	for i := range array {
@@ -25,6 +27,7 @@ func minFromSlice(array []float64) float64 {
 	return res
 }
 
+// вспомагательная функция для графиков
 func maxFromSlice(array []float64) float64 {
 	res := array[0]
 	for i := range array {
@@ -35,6 +38,7 @@ func maxFromSlice(array []float64) float64 {
 	return res
 }
 
+// вычисление углов и скорости
 func calculation(inputValues InputValues) (t, phi1T, phi2T, v1T, v2T []float64) {
 	const g = 9.82
 
@@ -73,6 +77,7 @@ func calculation(inputValues InputValues) (t, phi1T, phi2T, v1T, v2T []float64) 
 	return t, phi1T, phi2T, v1T, v2T
 }
 
+// Зависимость скорости от времени для каждого маятника
 func VFromTPlot2(t, v1T, v2T []float64) {
 	p := plot.New()
 
@@ -123,6 +128,7 @@ func VFromTPlot2(t, v1T, v2T []float64) {
 	}
 }
 
+// Зависимость угла от времени для каждого маятника
 func PhiFromTPlot2(t, phi1T, phi2T []float64) {
 	p := plot.New()
 
@@ -186,6 +192,7 @@ func main() {
 		T:    100.0,
 	}
 
+	// ввод и проверка на валидность
 	var phi1, phi2 float64
 	_, err := fmt.Scan(&inputValues.L)
 	if err != nil {
