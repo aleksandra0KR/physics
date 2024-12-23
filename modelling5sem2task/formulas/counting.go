@@ -41,11 +41,7 @@ func countV(x []float64) []float64 {
 func getValues(x []float64, P float64) []float64 {
 	y := make([]float64, len(x))
 	for i, xi := range x {
-		if xi == 0 {
-			y[i] = math.Cos(xi)
-		} else {
-			y[i] = P*math.Sin(xi)/xi + math.Cos(xi)
-		}
+		y[i] = P*math.Sin(xi)/xi + math.Cos(xi)
 	}
 	return y
 }
@@ -58,7 +54,7 @@ func GeneratePlot1() {
 	line.SetGlobalOptions(
 		charts.WithTitleOpts(opts.Title{Title: "The Kronig-Penney model\n"}),
 		charts.WithXAxisOpts(opts.XAxis{Name: "x"}),
-		charts.WithYAxisOpts(opts.YAxis{Name: "V(x)"}),
+		charts.WithYAxisOpts(opts.YAxis{Name: "U(x)"}),
 	)
 
 	points := make([]opts.LineData, len(x))
